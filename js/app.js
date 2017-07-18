@@ -15,7 +15,7 @@ const $twitter= $('#twitter');
 // Variable to hold responsive accordion and tabs container
 const ul = '<ul class="accordion" data-allow-all-closed="true" data-responsive-accordion-tabs="accordion large-tabs"></ul>';
 
-// Variables to hold location data elements and value
+// Variables to hold location data elements and values
 const $geoLat = $('[data-geo="lat"]');
 const $geoLng = $('[data-geo="lng"]');
 const $geoLoc = $('[data-geo="locality"]');
@@ -27,7 +27,10 @@ let loc = '';
 // More info icon location
 const imgInfo = 'img/info.svg';
 
+let randomArr = []; // Array to hold random numbers to check for repeats
+
 let searchDist = 50; // Search Distance in miles
+let stockPhotos = 50; // Number of stock restaurant photos ti fill in missing images
 
 // Track event categories returned by AJAX and store event HTML
 let categoryCount = 0;
@@ -146,6 +149,8 @@ $clearBtn.click(function () {
 
 // Function to refresh location data based on new search term
 let refreshData = function (lat, lng) {
+  // Empty random number array
+  randomArr = [];
   // Remove all children and bound events from containers
   $weather.children().remove();
   $food.children().remove();
@@ -432,7 +437,7 @@ let foodHtml = function (data) {
     if (place.restaurant.featured_image) {
       img = place.restaurant.featured_image;
     } else {
-      let randomImg = randomNumber(50);
+      let randomImg = randomNumber(stockPhotos);
       img = `img/stock/${randomImg}-rest.jpg`;
     }
     let name = place.restaurant.name;
@@ -587,8 +592,14 @@ let truncate = function (string, chars) {
   return string.slice(0, (chars - 1));
 };
 
-// Function to return a random number
+// Recursive function to return a unique random number.
 let randomNumber = function (number) {
-  return Math.floor(Math.random() * number) + 1;
+  let randomVal = Math.floor(Math.random() * number) + 1;
+  if (randomArr.indexOf(randomVal) === -1) {
+    randomArr.push(randomVal);
+    return randomVal;
+  } else {
+    return randomNumber(number);
+  }
 };
 
